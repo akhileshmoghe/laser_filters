@@ -99,13 +99,19 @@ ament_package()
 # Install
 ##############################################################################
 
-install(TARGETS pointcloud_filters laser_scan_filters 
+install(TARGETS 
+  pointcloud_filters 
+  laser_scan_filters 
   scan_to_cloud_filter_chain
   scan_to_scan_filter_chain
   generic_laser_filter_node
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch folder.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
 # Install headers
