@@ -41,7 +41,7 @@
 **/
 
 
-#include "filters/filter_base.h"
+#include "filters/filter_base.hpp"
 
 #include <sensor_msgs/msg/laser_scan.hpp>
 
@@ -57,14 +57,13 @@ public:
   int disp_hist_ ;
   bool disp_hist_enabled_;
 
-  bool configure()
+  // Override "get_configure" pure virtual methods in filters pkgs for node.
+  bool get_configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
   {
-    lower_threshold_ = 8000.0;
-    upper_threshold_ = 100000.0;
-    disp_hist_ = 1;
-    getParam("lower_threshold", lower_threshold_);
-    getParam("upper_threshold", upper_threshold_) ;
-    getParam("disp_histogram",  disp_hist_) ;
+	// Get the parameter value, If the parameter was not set, then assign default value.
+	node->get_parameter_or("lower_threshold", lower_threshold_, 8000.0);
+	node->get_parameter_or("upper_threshold", upper_threshold_, 100000.0) ;
+	node->get_parameter_or("disp_histogram",  disp_hist_, 1) ;
 
     disp_hist_enabled_ = (disp_hist_ == 0) ? false : true;
 

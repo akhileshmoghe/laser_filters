@@ -41,7 +41,7 @@
 **/
 
 
-#include "filters/filter_base.h"
+#include "filters/filter_base.hpp"
 
 #include <sensor_msgs/msg/laser_scan.hpp>
 
@@ -51,8 +51,8 @@ namespace laser_filters
 class InterpolationFilter : public filters::FilterBase<sensor_msgs::msg::LaserScan>
 {
 public:
-
-  bool configure()
+  // Override "get_configure" pure virtual methods in filters pkgs for node.
+  bool get_configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
   {
     return true;
   }

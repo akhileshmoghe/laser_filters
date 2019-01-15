@@ -41,11 +41,11 @@ This is useful for ground plane extraction
 
 **/
 
-#include "laser_geometry/laser_geometry.h"
-#include "filters/filter_base.h"
+#include "laser_geometry/laser_geometry.hpp"
+#include "filters/filter_base.hpp"
 #include "tf2_ros/transform_listener.h"
-#include "sensor_msgs/msg/Point_Cloud.hpp"
-#include "geometry_msgs/msg/Point32.hpp"
+#include "sensor_msgs/msg/point_cloud.hpp"
+#include "geometry_msgs/msg/point32.hpp"
 
 namespace laser_filters
 {
@@ -53,13 +53,16 @@ namespace laser_filters
 class PointCloudFootprintFilter : public filters::FilterBase<sensor_msgs::msg::PointCloud>
 {
 public:
-  PointCloudFootprintFilter() : tf_(buffer_) {
+  PointCloudFootprintFilter() :   clock(std::make_shared<rclcpp::Clock>(RCL_ROS_TIME)),
+  buffer_(clock), tf_(buffer_) {
     ROS_WARN("PointCloudFootprintFilter has been deprecated.  Please use PR2PointCloudFootprintFilter instead.\n");
   }
 
-  bool configure()
+  // Override "get_configure" pure virtual methods in filters pkgs for node.
+  bool get_configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
   {
-    if(!getParam("inscribed_radius", inscribed_radius_))
+	// Get the parameter value.
+    if (!node->get_parameter("inscribed_radius", inscribed_radius_))
     {
       ROS_ERROR("PointCloudFootprintFilter needs inscribed_radius to be set");
       return false;
@@ -127,6 +130,9 @@ public:
   }
 
 private:
+  //! @brief A clock to use for time and sleeping
+  //!
+  rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer buffer_;
   tf2_ros::TransformListener tf_;
   laser_geometry::LaserProjection projector_;

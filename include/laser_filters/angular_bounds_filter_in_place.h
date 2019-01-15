@@ -37,7 +37,7 @@
 #ifndef LASER_SCAN_ANGULAR_BOUNDS_FILTER_IN_PLACE_H
 #define LASER_SCAN_ANGULAR_BOUNDS_FILTER_IN_PLACE_H
 
-#include <filters/filter_base.h>
+#include <filters/filter_base.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 
 namespace laser_filters
@@ -48,12 +48,11 @@ namespace laser_filters
       double lower_angle_;
       double upper_angle_;
 
-      bool configure()
+      // Override "get_configure" pure virtual methods in filters pkgs for node.
+      bool get_configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
       {
-        lower_angle_ = 0;
-        upper_angle_ = 0;
-
-        if(!getParam("lower_angle", lower_angle_) || !getParam("upper_angle", upper_angle_)){
+    	// Get the parameter value, If the parameter was not set, then assign default value.
+        if(!node->get_parameter_or("lower_angle", lower_angle_, 0.0) || !node->get_parameter_or("upper_angle", upper_angle_, 0.0)){
           ROS_ERROR("Both the lower_angle and upper_angle parameters must be set to use this filter.");
           return false;
         }

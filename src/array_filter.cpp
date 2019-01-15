@@ -38,11 +38,10 @@ LaserArrayFilter::LaserArrayFilter() :
   
 };
 
-bool LaserArrayFilter::configure()
+bool LaserArrayFilter::get_configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
 {
- 
-  bool found_range_config = getParam("range_filter_chain", range_config_);
-  bool found_intensity_config = getParam("intensity_filter_chain", intensity_config_);
+  bool found_range_config = node->get_parameter("range_filter_chain", range_config_);
+  bool found_intensity_config = node->get_parameter("intensity_filter_chain", intensity_config_);
  
   if (!found_range_config && !found_intensity_config)
   {
@@ -59,14 +58,18 @@ bool LaserArrayFilter::configure()
   if (found_range_config)
   {
     range_filter_ = new filters::MultiChannelFilterChain<float>("float");
-    if (!range_filter_->configure(num_ranges_, range_config_))
+    //TODO verify configure param to filters pkg
+    //if (!range_filter_->configure(num_ranges_, range_config_))
+    if (!range_filter_->configure(num_ranges_, node))
       return false;
   }
 
   if (found_intensity_config)
   {
     intensity_filter_ = new filters::MultiChannelFilterChain<float>("float");
-    if (!intensity_filter_->configure(num_ranges_, intensity_config_))
+    //TODO verify configure param to filters pkg
+    //if (!intensity_filter_->configure(num_ranges_, intensity_config_))
+    if (!intensity_filter_->configure(num_ranges_, node))
       return false;
   }
   
@@ -99,7 +102,9 @@ bool LaserArrayFilter::update(const sensor_msgs::msg::LaserScan& scan_in, sensor
 
     ROS_INFO("LaserArrayFilter cleaning and reallocating due to larger scan size");
     
-    configure();
+    //TODO: Need to remove node after getting from filters pkg constructor and also verify node name
+    auto node = rclcpp::Node::make_shared("scan_filter_chain"); 
+    get_configure("", node);
   }
 
   /** \todo check for length of intensities too */

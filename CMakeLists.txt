@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(laser_filters)
 
+#TODO: Flag "filters_FOUND" will be remove after set properly by filters pkg.
+set( filters_FOUND 1 )
+
 ##############################################################################
 # Find dependencies
 ##############################################################################
@@ -16,7 +19,6 @@ find_package(message_filters REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(angles REQUIRED)
-find_package(rostime REQUIRED)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS system signals thread filesystem)
@@ -31,7 +33,6 @@ include_directories(include
   ${tf2_ros_INCLUDE_DIRS}
   ${laser_geometry_INCLUDE_DIRS}
   ${angles_INCLUDE_DIRS}
-  ${rostime_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
 )
 
@@ -45,7 +46,6 @@ link_directories(
   ${tf2_ros_LIBRARY_DIRS}
   ${laser_geometry_LIBRARY_DIRS}
   ${angles_LIBRARY_DIRS}
-  ${rostime_LIBRARY_DIRS}
 )
 
 add_definitions(-DTRANSFORM_LISTENER_NOT_IMPLEMENTED)

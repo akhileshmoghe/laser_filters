@@ -40,7 +40,7 @@
 **/
 
 
-#include "filters/filter_base.h"
+#include "filters/filter_base.hpp"
 
 #include <sensor_msgs/msg/laser_scan.hpp>
 
@@ -61,10 +61,12 @@ class LaserScanMaskFilter : public filters::FilterBase<sensor_msgs::msg::LaserSc
 public:
   std::map<std::string, std::vector<size_t> > masks_;
 
-  bool configure()
+  // Override "get_configure" pure virtual methods in filters pkgs for node.
+  bool get_configure(const std::string & param_name, rclcpp::Node::SharedPtr node)
   {
-    rclcpp::parameter::ParameterVariant config;
-    if (!getParam("masks", config))
+    rclcpp::Parameter config;
+    // Get the parameter value.
+    if (!node->get_parameter("masks", config))
     {
       ROS_ERROR("LaserScanMaskFilter: masks is not defined in the config.");
       return false;
